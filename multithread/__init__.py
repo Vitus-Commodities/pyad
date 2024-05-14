@@ -4,7 +4,7 @@ import aiohttp
 import aiofiles
 from pathlib import Path
 
-name = "multithread"
+name = "pyad"
 __version__ = "1.0.1"
 
 class Downloader:
