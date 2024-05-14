@@ -4,9 +4,9 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="multithread",
+    name="py_async_downloader",
     version="1.0.1",
-    author="DashLt",
+    author="DashLt, vk-vitus",
     description="An optionally asynchronous multithreaded downloader for python",
     long_description=long_description,
     long_description_content_type="text/markdown",

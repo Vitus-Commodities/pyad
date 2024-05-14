@@ -56,15 +56,15 @@ class Downloader:
         if "method" not in aiohttp_args:
             aiohttp_args["method"] = "GET"
         self.aiohttp_args = aiohttp_args
-    
-    def start(self):
+
+    def start(self, content_length):
         """Calls asyncstart() synchronously"""
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.asyncstart())
-    
-    async def asyncstart(self):
+        loop.run_until_complete(self.asyncstart(content_length))
+
+    async def asyncstart(self, content_lenght):
         """Re-initializes file and calls download() with it. Closes session if necessary"""
-        await self.download()
+        await self.download(content_lenght)
         if self.new_session:
             await self.session.close()
 
@@ -88,12 +88,12 @@ class Downloader:
                         progress.update(len(chunk))
                     await fileobj.write(chunk)
 
-    async def download(self):
+    async def download(self, content_length):
         """Generates ranges and calls fetch() with them."""
         temp_args = self.aiohttp_args.copy()
         temp_args["method"] = "HEAD"
         async with self.session.request(url=self.url, **temp_args) as head:
-            length = int(head.headers["Content-Length"])
+            length = content_length
             start = -1
             base = int(length / self.threads)
             ranges = list()
