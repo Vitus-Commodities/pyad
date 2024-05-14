@@ -1,0 +1,9 @@
+LICENSE
+README.md
+setup.py
+multithread/__init__.py
+pyad.egg-info/PKG-INFO
+pyad.egg-info/SOURCES.txt
+pyad.egg-info/dependency_links.txt
+pyad.egg-info/requires.txt
+pyad.egg-info/top_level.txt
