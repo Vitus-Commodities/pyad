@@ -3,6 +3,7 @@ import asyncio
 import aiohttp
 import aiofiles
 from pathlib import Path
+import copy
 
 name = "pyad"
 __version__ = "1.0.1"
@@ -53,8 +54,6 @@ class Downloader:
             self.session = session
             self.new_session = False
         self.progress_bar = progress_bar
-        if "method" not in aiohttp_args:
-            aiohttp_args["method"] = "GET"
         self.aiohttp_args = aiohttp_args
 
     def start(self, content_length=None):
@@ -76,11 +75,13 @@ class Downloader:
             - progress (bool or tqdm.Progress): the progress bar (or lack thereof) to update
             - filerange (tuple): the range of the file to get
         """
+        temp_args = copy.deepcopy(self.aiohttp_args)
+        temp_args["method"] = "GET"
         async with aiofiles.open(self.file, "wb") as fileobj:
-            if "headers" not in self.aiohttp_args:
-                self.aiohttp_args["headers"] = dict()
-            self.aiohttp_args["headers"]["Range"] = f"bytes={filerange[0]}-{filerange[1]}"
-            async with self.session.request(url=self.url, **self.aiohttp_args) as filereq:
+            if "headers" not in temp_args:
+                temp_args["headers"] = dict()
+            temp_args["headers"]["Range"] = f"bytes={filerange[0]}-{filerange[1]}"
+            async with self.session.request(url=self.url, **temp_args) as filereq:
                 offset = filerange[0]
                 await fileobj.seek(offset)
                 async for chunk in filereq.content.iter_any():
@@ -90,7 +91,7 @@ class Downloader:
 
     async def download(self, content_length=None):
         """Generates ranges and calls fetch() with them."""
-        temp_args = self.aiohttp_args.copy()
+        temp_args = copy.deepcopy(self.aiohttp_args)
         temp_args["method"] = "HEAD"
         async with self.session.request(url=self.url, **temp_args) as head:
             if content_length:
