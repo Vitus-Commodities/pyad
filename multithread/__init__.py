@@ -97,6 +97,7 @@ class Downloader:
                 length = content_length
             else:
                 length = int(head.headers["Content-Length"])
+
             start = -1
             base = int(length / self.threads)
             ranges = list()
